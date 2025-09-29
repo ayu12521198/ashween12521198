@@ -6,11 +6,15 @@
   <style>
     body {
       margin: 0;
-      background: black;
+      background: rgb(5, 1, 1);
       color: white;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
+      overflow-x: hidden;
+     
     }
+    
+
 
     .container {
       padding: 30px;
@@ -99,27 +103,20 @@
     
   </div>
 </div>
-    <video controls>
-        <source src="ashween/21.MP4" type="video/mp4" muted autoplay>
-        Your browser does not support the video tag.
+    <video muted autoplay controls>
+        <source src="ashween/21.mp4" type="video/mp4">
     </video>
     <p>This is just the beginning of our beautiful journey together.</p>
+  <script src="script.js"> </script>
+  <meta charset="UTF-8">
+    <title>First Page</title>
+</head>
+<body>
+    <h1>Hello!</h1>
+    <p>This is my first page.</p>
 
-  <script>
-    let box = document.getElementById("box");
-    let song= document.getElementById("audio");
-    
-    box.addEventListener("click",()=>{
-        if(song.paused){
-            song.play();
-        }
-        else{
-            song.pause();
-        }
-    });
-    
-
-  </script>
+    <!-- "Next" button -->
+    <button onclick="window.location.href='love.html';">Next</button>
 </body>
 
 </html>

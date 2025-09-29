@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>For My Ashu  ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffe6f0;
+            background-image: 
+                repeating-linear-gradient(45deg, #ffccdd 0, #ffccdd 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(-45deg, #ffccdd 0, #ffccdd 1px, transparent 1px, transparent 20px);
+            font-family: 'Arial', sans-serif;
+            color: #ff4081;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: rgba(255, 64, 129, 0.9);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .love-letter {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 300px); /* Fixed 3 columns of 300px each */
+            gap: 30px;
+            padding: 30px;
+            justify-content: center; /* Center the grid horizontally */
+            margin: 0 auto;
+            max-width: 960px; /* 3 columns * 300px + 2 gaps * 30px */
+        }
+
+        .photo-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s ease;
+            background-color: white;
+            padding: 10px;
+        }
+
+        .photo-container:hover {
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: 0 12px 25px rgba(255, 64, 129, 0.3);
+        }
+
+        .photo-container img {
+            width: 280px; /* Slightly smaller than container for padding */
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+
+        .photo-caption {
+            color: #ff4081;
+            font-size: 16px;
+            padding: 10px;
+            text-align: center;
+            font-style: italic;
+            line-height: 1.4;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .photo-container:hover .photo-caption {
+            color: #d81b60;
+            transform: scale(1.02);
+        }
+
+        /* Make gallery responsive */
+        @media (max-width: 1000px) {
+            .photo-gallery {
+                grid-template-columns: repeat(2, 300px);
+                max-width: 630px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .photo-gallery {
+                grid-template-columns: 300px;
+                max-width: 300px;
+            }
+        }
+
+        .heart-float {
+            position: fixed;
+            font-size: 24px;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Music Controls */
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(255, 64, 129, 0.9);
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .music-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 5px 15px;
+            outline: none;
+        }
+
+        .best-couple {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 192, 203, 0.95));
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px auto;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(255, 64, 129, 0.2);
+        }
+
+        .best-couple-title {
+            color: #ff4081;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .best-couple-title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff4081, transparent);
+            margin-top: 10px;
+        }
+
+        .featured-photo {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s ease;
+        }
+
+        .featured-photo:hover {
+            transform: scale(1.05);
+        }
+
+        .couple-bio {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #d81b60;
+            margin: 25px auto;
+            max-width: 800px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .couple-bio::before,
+        .couple-bio::after {
+            content: '"';
+            font-size: 60px;
+            color: #ff4081;
+            position: absolute;
+            opacity: 0.3;
+        }
+
+        .couple-bio::before {
+            top: -10px;
+            left: 10px;
+        }
+
+        .couple-bio::after {
+            bottom: -40px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button onclick="toggleMusic()" class="music-button" id="musicButton">▶️</button>
+    </div>
+
+    <div class="header">
+        <h1>My Dearest wife ❤️</h1>
+    </div>
+
+    <div class="content">
+        <div class="love-letter">
+            <h2>To My Forever Love 💑</h2>
+            <p>Every moment with you feels like a beautiful dream come true. Your smile lights up my world, and your love makes everything better. You're not just my partner; you're my best friend, my soulmate, and my entire world wrapped in one amazing person.</p>
+            <p>Thank you for being you, for loving me, and for making every day special. 💕</p>
+        </div>
+
+        <div class="best-couple">
+            <h2 class="best-couple-title">✨ Forever ✨</h2>
+            <img src="ashween/17.jpg" alt="Best Couple" class="featured-photo">
+            <div class="couple-bio">
+                Two hearts that beat as one, two souls intertwined in eternal love. Every laugh we share, every moment 
+                we spend together writes another beautiful chapter in our love story. From the way your eyes light up 
+                when you smile to how perfectly our hands fit together - we're not just a couple, we're a masterpiece 
+                of love painted by destiny. Through storms and sunshine, we stand together, making every day more 
+                beautiful than the last. You're not just my partner; you're my best friend, my soulmate, and my 
+                greatest blessing. Here's to us, my love - the best couple that was always meant to be! 💑✨
+            </div>
+        </div>
+
+        <div class="photo-gallery">
+            <div class="photo-container">
+                <img src="ashween/22.jpg" alt="Our Memory 1">
+                <div class="photo-caption">
+                    "Your smile is my favorite sight in the world" 💝
+                </div>
+            </div>
+            <div class="photo-container">
+                <img src="ashween/24.jpg" alt="Our Memory 2">
+                <div class="photo-caption">
+                    "With you, every moment becomes a precious memory" 💫
+                </div>
+            </div>
+            <div class="photo-container">
+                <img src="ashween/31.jpg" alt="Our Memory 3">
+                <div class="photo-caption">
+                    "You make my heart skip a beat, every single day" 💖
+                </div>
+            </div>
+            <div class="photo-container">
+                <img src="ashween/14.jpg" alt="Our Memory 4">
+                <div class="photo-caption">
+                    "Forever feels too short when I'm with you" 🌟
+                </div>
+            </div>
+            <div class="photo-container">
+                <img src="ashween/87.jpg" alt="Our Memory 5">
+                <div class="photo-caption">
+                    "You're the missing piece to my puzzle" ✨
+                </div>
+            </div>
+            <div class="photo-container">
+                <img src="ashween/37.jpg" alt="Our Memory 6">
+                <div class="photo-caption">
+                    "Together is my favorite place to be" 💑
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Music Control
+        let isPlaying = false;
+        const music = document.getElementById('bgMusic');
+        const musicButton = document.getElementById('musicButton');
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicButton.textContent = '▶️';
+            } else {
+                music.play();
+                musicButton.textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Floating Hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-float';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.opacity = '0.6';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        // Create hearts periodically
+        setInterval(createHeart, 3000);
+    </script>
+</body>
+</html>
