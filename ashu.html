@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>For My Ashu  ❤️</title>
+    <link rel="stylesheet" href="assets/styles.css">
     <style>
         body {
             margin: 0;
@@ -223,6 +225,18 @@
     </style>
 </head>
 <body>
+    <header class="site-header" role="banner">
+        <div class="container">
+            <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
+            <nav class="site-nav" role="navigation" aria-label="Main">
+                <a href="index.html">Home</a>
+                <a href="photo.html">Photos</a>
+                <a href="love.html">Love</a>
+                <a href="wife.html">Wife</a>
+                <a href="make_video.html">Make Video</a>
+            </nav>
+        </div>
+    </header>
     <!-- Background Music -->
     <audio id="bgMusic" loop>
         <source src="song.mp3" type="audio/mpeg">
@@ -332,5 +346,8 @@
         // Create hearts periodically
         setInterval(createHeart, 3000);
     </script>
+        <footer class="site-footer">
+            <div class="container"><small>Made with ❤ — Ashu</small></div>
+        </footer>
 </body>
 </html>

@@ -78,13 +78,26 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposal Page</title>
+  <link rel="stylesheet" href="assets/styles.css">
     <h1 class="header">💖 Will You Marry Me? 💖</h1>
     <p class="message">You are the sunshine in my life. I can't imagine my future without you...</p>
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
+      <nav class="site-nav" role="navigation" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="photo.html">Photos</a>
+        <a href="love.html">Love</a>
+        <a href="wife.html">Wife</a>
+        <a href="celebration.html">Celebrate</a>
+      </nav>
+    </div>
+  </header>
     <div class="btn-group">
       <button id="yesBtn">YES 💍</button>
       <button id="noBtn">NO 🙈</button>
-      <button id="secretBtn" style="display:none; background:#333; color:#fff">Secret</button>
     </div>
     <div class="confetti" id="confetti"></div>
   </div>
@@ -93,9 +106,6 @@
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const confetti = document.getElementById("confetti");
-  const secretBtn = document.getElementById('secretBtn');
-  const headerEl = document.querySelector('.header');
-  let headerClicks = 0;
 
     noBtn.addEventListener("mouseover", () => {
       const x = Math.random() * (window.innerWidth - 500);
@@ -111,23 +121,6 @@
         window.location.href = "celebration.html";
       }, 2000);
     });
-
-
-    // secret button: reveals after clicking header 5 times
-    if (headerEl) {
-      headerEl.addEventListener('click', () => {
-        headerClicks++;
-        if (headerClicks >= 5) {
-          headerClicks = 0;
-          secretBtn.style.display = 'inline-block';
-          // briefly highlight
-          secretBtn.style.boxShadow = '0 6px 18px rgba(0,0,0,0.2)';
-          setTimeout(() => secretBtn.style.boxShadow = '', 2000);
-        }
-      });
-    }
-
-    if (secretBtn) secretBtn.addEventListener('click', () => window.location.href = 'important.html');
 
     function launchConfetti() {
       for (let i = 0; i < 150; i++) {
@@ -150,5 +143,8 @@
       return colors[Math.floor(Math.random() * colors.length)];
     }
   </script>
+  <footer class="site-footer">
+    <div class="container"><small>Made with ❤ — Ashu</small></div>
+  </footer>
 </body>
 </html>

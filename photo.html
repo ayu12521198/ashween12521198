@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Photos</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:linear-gradient(135deg,#fff,#ffeef6);color:#333}
+    .wrap{max-width:1200px;margin:24px auto;padding:18px}
+    h1{color:#d81b60;text-align:center}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:18px}
+    .tile{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center}
+    .tile img{width:100%;height:200px;object-fit:cover;display:block}
+    .controls{display:flex;justify-content:center;gap:12px;margin-top:14px}
+    .btn{padding:10px 14px;border-radius:8px;border:none;background:#e91e63;color:#fff;cursor:pointer}
+    .back{display:inline-block;margin-top:12px;color:#2196f3;text-decoration:none}
+    /* lightbox styles */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s}
+    .lightbox.open{opacity:1;pointer-events:auto}
+    .lightbox img{max-width:95%;max-height:90%;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+    .lightbox .close,.lightbox .prev,.lightbox .next{position:fixed;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .lightbox .close{top:20px;right:20px}
+    .lightbox .prev{left:20px;top:50%;transform:translateY(-50%)}
+    .lightbox .next{right:20px;top:50%;transform:translateY(-50%)}
+    .lightbox .meta{position:fixed;bottom:20px;color:#fff;font-size:14px}
+  </style>
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
+      <nav class="site-nav" role="navigation" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="photo.html">Photos</a>
+        <a href="love.html">Love</a>
+        <a href="wife.html">Wife</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <h1>Photo Gallery</h1>
+    <div class="controls">
+      <button id="loadBtn" class="btn">Load Photos</button>
+      <a class="back" href="index.html">← Back to Home</a>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+    <!-- lightbox -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" style="display:block">
+      <button class="close" id="lbClose">✕</button>
+      <button class="prev" id="lbPrev">◀</button>
+      <img id="lbImg" src="" alt="" />
+      <button class="next" id="lbNext">▶</button>
+      <div class="meta" id="lbMeta"></div>
+    </div>
+  </div>
+
+  <script>
+  // build a list of image paths (1..89) and display available ones
+  const grid = document.getElementById('grid');
+  const loadBtn = document.getElementById('loadBtn');
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbClose = document.getElementById('lbClose');
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  const lbMeta = document.getElementById('lbMeta');
+  let imagesList = [];
+  let currentIndex = -1;
+
+    function makeTile(src, idx){
+      const div = document.createElement('div'); div.className='tile';
+      const img = document.createElement('img'); img.src = src; img.alt = src.split('/').pop(); img.dataset.index = idx;
+      div.appendChild(img);
+      return div;
+    }
+
+    async function loadImages(){
+      loadBtn.disabled = true; loadBtn.textContent = 'Loading...';
+      grid.innerHTML = '';
+      const max = 89;
+      imagesList = [];
+      for(let i=1;i<=max;i++){
+        const src = `ashween/${i}.jpg`;
+        try{
+          // test loading
+          await new Promise((res,rej)=>{ const im=new Image(); im.onload=res; im.onerror=rej; im.src=src; });
+          imagesList.push(src);
+          grid.appendChild(makeTile(src, imagesList.length-1));
+        }catch(e){ /* skip missing */ }
+      }
+      loadBtn.textContent = 'Reload Photos'; loadBtn.disabled = false;
+    }
+
+  loadBtn.addEventListener('click', loadImages);
+
+    // auto-load once for convenience
+    loadImages();
+
+    // Thumbnail click -> open lightbox
+    grid.addEventListener('click', (e)=>{
+      const img = e.target.closest('img');
+      if (!img) return;
+      const idx = Number(img.dataset.index);
+      if (Number.isFinite(idx)) openLightbox(idx);
+    });
+
+    function openLightbox(idx){
+      currentIndex = idx;
+      lbImg.src = imagesList[currentIndex];
+      lbImg.alt = imagesList[currentIndex].split('/').pop();
+      lbMeta.textContent = `${currentIndex+1} / ${imagesList.length}`;
+      lightbox.classList.add('open');
+      lightbox.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(){
+      lightbox.classList.remove('open');
+      setTimeout(()=>{ lightbox.style.display = 'none'; }, 200);
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    function showNext(){ if (imagesList.length===0) return; currentIndex = (currentIndex+1) % imagesList.length; openLightbox(currentIndex); }
+    function showPrev(){ if (imagesList.length===0) return; currentIndex = (currentIndex-1 + imagesList.length) % imagesList.length; openLightbox(currentIndex); }
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); showNext(); });
+    lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); showPrev(); });
+
+    // keyboard navigation
+    document.addEventListener('keydown', (e)=>{
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') showNext();
+      if (e.key === 'ArrowLeft') showPrev();
+    });
+  </script>
+  <footer class="site-footer">
+    <div class="container"><small>Made with ❤ — Ashu</small></div>
+  </footer>
+</body>
+</html>
