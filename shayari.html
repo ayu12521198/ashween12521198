@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shayari — Love Lines</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .shayari-list{max-width:900px;margin:20px auto;display:grid;gap:12px}
+    .shayari-card{background:var(--panel);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.45);color:var(--text)}
+    .shayari-meta{color:var(--muted);font-size:13px;margin-bottom:8px}
+    .copy-btn{float:right;padding:6px 10px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;cursor:pointer}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
+      <nav class="site-nav" role="navigation">
+        <a href="index.html">Home</a>
+        <a href="photo.html">Photos</a>
+        <a href="shayari.html">Shayari</a>
+        <a href="wife.html">Wife</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 style="margin-top:18px">Love Shayari & Lines</h2>
+    <p class="hero-sub">A small collection of Hindi and English shayari to express your feelings.</p>
+
+    <div class="shayari-list" id="list">
+      <div class="shayari-card">
+        <button class="copy-btn" data-text="Tum meri zindagi ki woh roshni ho jo har andhere ko mita deti hai.">Copy</button>
+        <div class="shayari-meta">Hindi • Short</div>
+        <div class="shayari-text">Tum meri zindagi ki woh roshni ho jo har andhere ko mita deti hai.</div>
+      </div>
+
+      <div class="shayari-card">
+        <button class="copy-btn" data-text="Tere bina subah adhoori hai, raat adhoori — tu ho toh saari duniya poori lagti hai.">Copy</button>
+        <div class="shayari-meta">Hindi • Poetic</div>
+        <div class="shayari-text">Tere bina subah adhoori hai, raat adhoori — tu ho toh saari duniya poori lagti hai.</div>
+      </div>
+
+      <div class="shayari-card">
+        <button class="copy-btn" data-text="You are my favorite hello and my hardest goodbye.">Copy</button>
+        <div class="shayari-meta">English • Short</div>
+        <div class="shayari-text">You are my favorite hello and my hardest goodbye.</div>
+      </div>
+
+      <div class="shayari-card">
+        <button class="copy-btn" data-text="In the quiet between heartbeats I find your name written in my breath.">Copy</button>
+        <div class="shayari-meta">English • Poetic</div>
+        <div class="shayari-text">In the quiet between heartbeats I find your name written in my breath.</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"><div class="container"><small>Made with ❤ — Ashu</small></div></footer>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const text = btn.dataset.text;
+        navigator.clipboard.writeText(text).then(()=>{
+          btn.textContent = 'Copied!';
+          setTimeout(()=>btn.textContent='Copy',1200);
+        }).catch(()=>{ alert('Copy failed — try selecting text.') });
+      });
+    });
+  </script>
+</body>
+</html>

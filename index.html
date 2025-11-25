@@ -3,104 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Will You Marry Me?</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      font-family: 'Arial', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      text-align: center;
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      position: relative;
-    }
-
-    .header {
-      font-size: 2.5rem;
-      color: #e91e63;
-      margin-bottom: 20px;
-    }
-
-    .message {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      color: #333;
-    }
-
-    .btn-group button {
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    #yesBtn {
-      background-color: #4caf50;
-      color: white;
-    }
-
-    #noBtn {
-      background-color: #f44336;
-      color: white;
-      position: relative;
-    }
-
-    .confetti {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 99;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(100vh) rotateZ(360deg);
-        opacity: 0;
-      }
-    }
-  </style>
+  <title>Ashu — Proposal</title>
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Proposal Page</title>
-  <link rel="stylesheet" href="assets/styles.css">
-    <h1 class="header">💖 Will You Marry Me? 💖</h1>
-    <p class="message">You are the sunshine in my life. I can't imagine my future without you...</p>
   <header class="site-header" role="banner">
     <div class="container">
       <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
       <nav class="site-nav" role="navigation" aria-label="Main">
         <a href="index.html">Home</a>
         <a href="photo.html">Photos</a>
-        <a href="love.html">Love</a>
+        <a href="shayari.html">Shayari</a>
         <a href="wife.html">Wife</a>
         <a href="celebration.html">Celebrate</a>
       </nav>
     </div>
   </header>
-    <div class="btn-group">
-      <button id="yesBtn">YES 💍</button>
-      <button id="noBtn">NO 🙈</button>
-    </div>
-    <div class="confetti" id="confetti"></div>
-  </div>
+
+  <main class="container" style="padding-top:28px;">
+    <section class="hero" aria-labelledby="proposal-heading">
+      <h1 id="proposal-heading">Will You Marry Me?</h1>
+      <p class="hero-sub">You are the sunshine of my life. Every moment with you is a memory I cherish.</p>
+      <div style="margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" id="yesBtn">Yes — 💍</button>
+        <button class="btn ghost" id="noBtn">No — 🙈</button>
+        <a class="btn" href="shayari.html">Open Shayari</a>
+      </div>
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+    </section>
+  </main>
 
   <script>
     const yesBtn = document.getElementById("yesBtn");
