@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Love Page</title>
+</head>
+<meta charset="UTF-8">
+<title>Love Page</title>
+<style>
+    <link rel="stylesheet" href="assets/styles.css">
+    body {
+
+        background-color: #ffe6f0;
+        background-image: repeating-linear-gradient(45deg, #ffccdd 0, #ffccdd 1px, transparent 1px, transparent 20px),
+            repeating-linear-gradient(-45deg, #ffccdd 0, #ffccdd 1px, transparent 1px, transparent 20px);
+        color: #f50d81;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .bg-text {
+        position: fixed;
+        top: 1%;
+        left: 2%;
+        transform: translate(-50%, -50%);
+        font-size: 100px;
+        color: rgba(255, 192, 203, 0.2);
+        z-index: 0;
+        user-select: none;
+    }
+
+    .content {
+        position: relative;
+        z-index: 1;
+    }
+
+
+    body {
+        text-align: center;
+        margin-top: 1px;
+        font-family: Arial, sans-serif;
+        background-color: #edb0c4;
+    }
+
+    h1 {
+        color: #e91e63;
+        font-size: 20px;
+    }
+
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .image-container {
+        position: relative;
+        overflow: visible;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+
+    .image-container:hover {
+        transform: scale(1.5);
+        z-index: 999;
+        position: relative;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        display: block;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .image-container video {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    /* Video rotations */
+    .video-1, .video-2, .video-3, .video-4,
+    .video-5, .video-6, .video-7, .video-8 {
+        transform: rotate(360deg) !important;
+    }
+
+    .nav-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, #ff4081, #f50057);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 18px;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 64, 129, 0.6);
+    }
+
+    .nav-button:active {
+        transform: translateY(1px);
+    }
+</style>
+</head>
+
+<body>
+    <header class="site-header" role="banner">
+        <div class="container">
+            <div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div>
+            <nav class="site-nav" role="navigation" aria-label="Main">
+                <a href="index.html">Home</a>
+                <a href="photo.html">Photos</a>
+                <a href="love.html">Love</a>
+                <a href="wife.html">Wife</a>
+                <a href="celebration.html">Celebrate</a>
+            </nav>
+        </div>
+    </header>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Initial click overlay -->
+    <div id="clickOverlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 192, 203, 0.9);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: opacity 0.5s ease;
+    ">
+        <div style="text-align: center; color: white;">
+            <div style="font-size: 48px; margin-bottom: 20px;">💝</div>
+            <div style="font-size: 24px;">Click anywhere to start our journey</div>
+        </div>
+    </div>
+
+    <!-- Navigation Button -->
+    <a href="ashu.html" class="nav-button">
+        For Ashu 💝
+    </a>
+    <!-- Wife Navigation Button (smaller, bottom-centered) -->
+    <a href="wife.html" class="nav-button" style="top:auto; bottom:20px; left:50%; right:auto; transform:translateX(-50%); padding:8px 14px; font-size:14px; border-radius:20px; background: linear-gradient(45deg,#ff80ab,#ff4081);">
+        Wife ❤️
+    </a>
+
+    <!-- Music Controls -->
+    <div id="musicControls" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background-color: rgba(255, 64, 129, 0.9);
+        padding: 10px;
+        border-radius: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        display: none;
+    ">
+        <button onclick="toggleMusic()" id="musicButton" style="
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 15px;
+            outline: none;
+        ">
+            ⏸️
+        </button>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        const music = document.getElementById('bgMusic');
+        const musicButton = document.getElementById('musicButton');
+        const overlay = document.getElementById('clickOverlay');
+        const controls = document.getElementById('musicControls');
+
+        function startExperience() {
+            // Play music
+            music.play();
+            isPlaying = true;
+            
+            // Hide overlay with fade effect
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                // Show music controls
+                controls.style.display = 'block';
+            }, 500);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicButton.textContent = '▶️';
+            } else {
+                music.play();
+                musicButton.textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Add click event to overlay
+        overlay.addEventListener('click', startExperience);
+
+        // Update button state when music ends
+        music.addEventListener('ended', () => {
+            isPlaying = false;
+            musicButton.textContent = '▶️';
+        });
+    </script>
+
+    <h1 style="color: #f7f1f1; background-color: #ff4081; padding: 5px; border-radius: 30px;
+           text-shadow: 0 0 20px #f7f1f3, 0 0 1px #b73561;">
+        I love you baby ❤️
+    </h1>
+
+    <div class="image-grid">
+        <div class="image-container">
+            <img src="ashween/1.jpg" alt="Love Memory 1">
+        </div>
+        <div class="image-container">
+            <img src="ashween/2.jpg" alt="Love Memory 2">
+        </div>
+        <div class="image-container">
+            <img src="ashween/3.jpg" alt="Love Memory 3">
+        </div>
+        <div class="image-container">
+            <img src="ashween/4.jpg" alt="Love Memory 4">
+        </div>
+        <div class="image-container">
+            <img src="ashween/5.jpg" alt="Love Memory 5">
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
