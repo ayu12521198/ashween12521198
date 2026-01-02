@@ -14,6 +14,13 @@
     .tile img,.tile video{width:100%;height:200px;object-fit:cover;display:block}
     .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
     .play-overlay button{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 10px;border-radius:6px;pointer-events:auto;cursor:pointer}
+    .select-btn{position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.95);border:none;padding:6px;border-radius:50%;cursor:pointer;box-shadow:0 6px 18px rgba(150,50,100,0.08);font-size:16px}
+    .tile.selected{outline:3px solid rgba(255,70,120,0.12);box-shadow:0 10px 30px rgba(210,70,120,0.06)}
+    .capsule-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(255,240,250,0.9), rgba(255,250,255,0.6));z-index:2000;opacity:0;pointer-events:none;transition:opacity .18s ease}
+    .capsule-modal.open{opacity:1;pointer-events:auto}
+    .capsule-card{background:rgba(255,255,255,0.86);backdrop-filter:blur(6px);padding:18px;border-radius:12px;max-width:640px;box-shadow:0 12px 40px rgba(200,80,120,0.12);text-align:center}
+    .capsule-card h2{margin:0;color:var(--love);font-size:20px}
+    .capsule-card .muted{color:var(--muted);font-size:13px}
     .controls{display:flex;justify-content:center;gap:12px;margin-top:14px}
     .btn{padding:10px 14px;border-radius:8px;border:none;background:#e91e63;color:#fff;cursor:pointer}
     .back{display:inline-block;margin-top:12px;color:#2196f3;text-decoration:none}
@@ -46,12 +53,31 @@
     <h1>Photo Gallery</h1>
     <div class="controls">
       <button id="loadBtn" class="btn">Load Photos</button>
+      <button id="openCapsuleBtn" class="btn love">Love Capsule</button>
       <button id="loadAllBtn" class="btn ghost">Load All Photos & Videos</button>
       <a class="back" href="index.html">← Back to Home</a>
     </div>
 
     <div id="grid" class="grid" aria-live="polite" aria-label="Photo and video gallery"></div>
     <div id="galleryStatus" style="display:none;text-align:center;color:var(--muted);margin-top:8px;font-size:14px"></div>
+
+    <!-- Love Capsule modal -->
+    <div id="capsuleModal" class="capsule-modal" role="dialog" aria-modal="true" style="display:none">
+      <div class="capsule-card" role="document">
+        <h2>Love Capsule</h2>
+        <p class="muted">Select photos (click the ♡) and write a short message. Download the capsule (JSON) to send or save.</p>
+        <textarea id="capsuleMsg" rows="3" placeholder="Write your message..." style="width:100%;margin-top:8px;border-radius:8px;padding:8px">तुम्हारी हर बात मेरे दिन को सुनहरा कर देती है — मैं तुमसे बेहद प्यार करता हूँ।</textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div><small id="selectedCount">0 selected</small></div>
+          <div style="display:flex;gap:8px">
+            <button id="selectAllBtn" class="btn ghost">Select All</button>
+            <button id="downloadCapsuleBtn" class="btn love">Download Capsule</button>
+            <button id="closeCapsuleBtn" class="btn ghost">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- lightbox -->
     <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" style="display:none">
       <button class="close" id="lbClose">✕</button>
@@ -82,6 +108,8 @@
     const div = document.createElement('div'); div.className='tile';
     if(item.type === 'image'){
       const img = document.createElement('img'); img.src = item.src; img.alt = item.name; img.dataset.index = idx; img.loading='lazy'; div.appendChild(img);
+      const sel = document.createElement('button'); sel.className='select-btn'; sel.title='Select photo'; sel.innerHTML='♡'; sel.addEventListener('click',(e)=>{ e.stopPropagation(); toggleSelect(idx); });
+      div.appendChild(sel);
     }else{
       const vid = document.createElement('video'); vid.src = item.src; vid.dataset.index = idx; vid.preload='metadata'; vid.muted=true; vid.playsInline=true; div.appendChild(vid);
       const overlay = document.createElement('div'); overlay.className='play-overlay'; overlay.innerHTML = `<button aria-label="Play video">▶</button>`;
@@ -97,6 +125,44 @@
   }
   async function checkVideo(src){
     return await new Promise((res,rej)=>{ const v=document.createElement('video'); v.onloadedmetadata=()=>res(true); v.onerror=()=>rej(false); v.src=src; });
+  }
+
+  // selection and capsule helpers
+  let selectedSet = new Set();
+  function toggleSelect(idx){
+    const tile = document.querySelector(`.tile[data-index="${idx}"]`);
+    if(selectedSet.has(idx)){
+      selectedSet.delete(idx); if(tile) tile.classList.remove('selected');
+    }else{
+      selectedSet.add(idx); if(tile) tile.classList.add('selected');
+    }
+    updateSelectedCount();
+  }
+  function updateSelectedCount(){
+    const el = document.getElementById('selectedCount'); if(!el) return; el.textContent = `${selectedSet.size} selected`;
+  }
+  function openCapsuleModal(){
+    const m = document.getElementById('capsuleModal'); if(!m) return; m.style.display='flex'; setTimeout(()=>m.classList.add('open'),20); updateSelectedCount();
+  }
+  function closeCapsuleModal(){
+    const m = document.getElementById('capsuleModal'); if(!m) return; m.classList.remove('open'); setTimeout(()=>m.style.display='none',220);
+  }
+  function selectAll(){
+    // select all image tiles currently displayed
+    document.querySelectorAll('.tile').forEach((t,i)=>{
+      const idx = Number(t.dataset.index);
+      const isImage = (mediaList[idx] && mediaList[idx].type === 'image');
+      if(isImage){ selectedSet.add(idx); t.classList.add('selected'); }
+    });
+    updateSelectedCount();
+  }
+  function downloadCapsule(){
+    const msg = document.getElementById('capsuleMsg')?.value || '';
+    const items = Array.from(selectedSet).map(i => mediaList[i]?.src).filter(Boolean);
+    if(items.length===0){ alert('Please select at least one photo to include in the capsule.'); return; }
+    const capsule = { message: msg, items, created: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(capsule, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `love-capsule-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
   }
 
   // fetch a manifest with all media files and populate the grid
@@ -135,6 +201,14 @@
   }
 
   loadBtn.addEventListener('click', loadImages);
+  const openCapsuleBtn = document.getElementById('openCapsuleBtn');
+  const closeCapsuleBtn = document.getElementById('closeCapsuleBtn');
+  const downloadCapsuleBtn = document.getElementById('downloadCapsuleBtn');
+  const selectAllBtn = document.getElementById('selectAllBtn');
+  if(openCapsuleBtn) openCapsuleBtn.addEventListener('click', openCapsuleModal);
+  if(closeCapsuleBtn) closeCapsuleBtn.addEventListener('click', closeCapsuleModal);
+  if(downloadCapsuleBtn) downloadCapsuleBtn.addEventListener('click', downloadCapsule);
+  if(selectAllBtn) selectAllBtn.addEventListener('click', selectAll);
   loadAllBtn.addEventListener('click', loadAllMedia);
 
   // auto-load all media on page open

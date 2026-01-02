@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reasons Why I Love You</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    body{font-family: 'Georgia', 'Times New Roman', serif;background:linear-gradient(180deg,#08060a,#0b0a0f)}
+    .reasons-wrap{max-width:900px;margin:40px auto;padding:30px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:14px}
+    .reason{padding:18px;border-radius:12px;margin:12px 0;background:linear-gradient(90deg, rgba(255,200,220,0.03), rgba(255,240,245,0.01))}
+    .reason h3{margin:0;color:var(--love);font-family: 'Georgia', serif}
+    .reason p{margin:6px 0 0;color:var(--muted)}
+    .tools{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  </style>
+</head>
+<body>
+  <header class="site-header"><div class="container"><div class="brand"><div class="logo">A</div><h1 style="margin:0;font-size:16px">Ashu</h1></div><nav class="site-nav"><a href="index.html">Home</a><a href="photo.html">Photos</a><a href="shayari.html">Shayari</a></nav></div></header>
+
+  <main class="container">
+    <div class="reasons-wrap">
+      <h1 class="love-color">Reasons Why I Love You</h1>
+      <p class="muted">A few things that make you my person — printed, saved, and meant only for you.</p>
+
+      <div class="reason">
+        <h3>Your Laugh</h3>
+        <p>It brightens any bad day and makes ordinary things unforgettable.</p>
+      </div>
+
+      <div class="reason">
+        <h3>Your Heart</h3>
+        <p>You are kind and fiercely loyal — you make me want to be better every day.</p>
+      </div>
+
+      <div class="reason">
+        <h3>Your Curiosity</h3>
+        <p>You approach life with wonder and bring me along to discover new things.</p>
+      </div>
+
+      <div class="tools">
+        <button id="copyAll" class="btn">Copy All</button>
+        <button id="printBtn" class="btn ghost">Print</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('copyAll').addEventListener('click', async ()=>{
+      const texts = Array.from(document.querySelectorAll('.reason')).map(r=> r.querySelector('h3').textContent + ': ' + r.querySelector('p').textContent);
+      const joined = texts.join('\n\n');
+      try{ await navigator.clipboard.writeText(joined); alert('Copied reasons to clipboard'); }
+      catch(e){ alert('Copy failed — select and copy manually'); }
+    });
+    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+  </script>
+
+  <footer class="site-footer"><div class="container"><small>Made by Ayu</small></div></footer>
+</body>
+</html>
