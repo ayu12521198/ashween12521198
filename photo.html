@@ -10,8 +10,10 @@
     .wrap{max-width:1200px;margin:24px auto;padding:18px}
     h1{color:#d81b60;text-align:center}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:18px}
-    .tile{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center}
-    .tile img{width:100%;height:200px;object-fit:cover;display:block}
+    .tile{position:relative;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center}
+    .tile img,.tile video{width:100%;height:200px;object-fit:cover;display:block}
+    .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .play-overlay button{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 10px;border-radius:6px;pointer-events:auto;cursor:pointer}
     .controls{display:flex;justify-content:center;gap:12px;margin-top:14px}
     .btn{padding:10px 14px;border-radius:8px;border:none;background:#e91e63;color:#fff;cursor:pointer}
     .back{display:inline-block;margin-top:12px;color:#2196f3;text-decoration:none}
@@ -19,6 +21,7 @@
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s}
     .lightbox.open{opacity:1;pointer-events:auto}
     .lightbox img{max-width:95%;max-height:90%;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+    .lightbox .lbMedia img,.lightbox .lbMedia video{max-width:95%;max-height:90%;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,0.6);display:block}
     .lightbox .close,.lightbox .prev,.lightbox .next{position:fixed;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
     .lightbox .close{top:20px;right:20px}
     .lightbox .prev{left:20px;top:50%;transform:translateY(-50%)}
@@ -43,104 +46,144 @@
     <h1>Photo Gallery</h1>
     <div class="controls">
       <button id="loadBtn" class="btn">Load Photos</button>
+      <button id="loadAllBtn" class="btn ghost">Load All Photos & Videos</button>
       <a class="back" href="index.html">← Back to Home</a>
     </div>
 
-    <div id="grid" class="grid" aria-live="polite"></div>
+    <div id="grid" class="grid" aria-live="polite" aria-label="Photo and video gallery"></div>
+    <div id="galleryStatus" style="display:none;text-align:center;color:var(--muted);margin-top:8px;font-size:14px"></div>
     <!-- lightbox -->
-    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" style="display:block">
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" style="display:none">
       <button class="close" id="lbClose">✕</button>
       <button class="prev" id="lbPrev">◀</button>
-      <img id="lbImg" src="" alt="" />
+      <div id="lbMedia" class="lbMedia" role="region" aria-label="Media viewer"></div>
       <button class="next" id="lbNext">▶</button>
       <div class="meta" id="lbMeta"></div>
     </div>
   </div>
 
   <script>
-  // build a list of image paths (1..89) and display available ones
+  // build a gallery that supports images and videos (jpg/jpeg/png/mp4/webm)
   const grid = document.getElementById('grid');
   const loadBtn = document.getElementById('loadBtn');
+  const loadAllBtn = document.getElementById('loadAllBtn');
   const lightbox = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lbImg');
+  const lbMedia = document.getElementById('lbMedia');
   const lbClose = document.getElementById('lbClose');
   const lbPrev = document.getElementById('lbPrev');
   const lbNext = document.getElementById('lbNext');
   const lbMeta = document.getElementById('lbMeta');
-  let imagesList = [];
+  const galleryStatus = document.getElementById('galleryStatus');
+
+  let mediaList = []; // {src,type,name}
   let currentIndex = -1;
 
-    function makeTile(src, idx){
-      const div = document.createElement('div'); div.className='tile';
-      const img = document.createElement('img'); img.src = src; img.alt = src.split('/').pop(); img.dataset.index = idx;
-      div.appendChild(img);
-      return div;
+  function makeTile(item, idx){
+    const div = document.createElement('div'); div.className='tile';
+    if(item.type === 'image'){
+      const img = document.createElement('img'); img.src = item.src; img.alt = item.name; img.dataset.index = idx; img.loading='lazy'; div.appendChild(img);
+    }else{
+      const vid = document.createElement('video'); vid.src = item.src; vid.dataset.index = idx; vid.preload='metadata'; vid.muted=true; vid.playsInline=true; div.appendChild(vid);
+      const overlay = document.createElement('div'); overlay.className='play-overlay'; overlay.innerHTML = `<button aria-label="Play video">▶</button>`;
+      overlay.querySelector('button').addEventListener('click',(e)=>{ e.stopPropagation(); openLightbox(idx); });
+      div.appendChild(overlay);
     }
+    div.dataset.index = idx;
+    return div;
+  }
 
-    async function loadImages(){
-      loadBtn.disabled = true; loadBtn.textContent = 'Loading...';
-      grid.innerHTML = '';
-      const max = 89;
-      imagesList = [];
-      for(let i=1;i<=max;i++){
-        const src = `ashween/${i}.jpg`;
-        try{
-          // test loading
-          await new Promise((res,rej)=>{ const im=new Image(); im.onload=res; im.onerror=rej; im.src=src; });
-          imagesList.push(src);
-          grid.appendChild(makeTile(src, imagesList.length-1));
-        }catch(e){ /* skip missing */ }
-      }
-      loadBtn.textContent = 'Reload Photos'; loadBtn.disabled = false;
+  async function checkImage(src){
+    return await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(true); im.onerror=()=>rej(false); im.src=src; });
+  }
+  async function checkVideo(src){
+    return await new Promise((res,rej)=>{ const v=document.createElement('video'); v.onloadedmetadata=()=>res(true); v.onerror=()=>rej(false); v.src=src; });
+  }
+
+  // fetch a manifest with all media files and populate the grid
+  async function fetchManifest(){
+    try{
+      const res = await fetch('ashween/media.json');
+      const list = await res.json(); // [{name,type}]
+      mediaList = list.map(f => ({ src: `ashween/${f.name}`, type: f.type, name: f.name }));
+      return mediaList;
+    }catch(err){
+      console.error('Could not load media manifest', err);
+      galleryStatus.textContent = 'Failed to load media manifest';
+      mediaList = [];
+      return [];
     }
+  }
+
+  async function loadImages(){
+    loadBtn.disabled = true; loadBtn.textContent = 'Loading...';
+    grid.innerHTML = '';
+    await fetchManifest();
+    const images = mediaList.filter(m => m.type === 'image');
+    mediaList = images;
+    images.forEach((it, i) => grid.appendChild(makeTile(it, i)));
+    loadBtn.textContent = 'Reload Photos'; loadBtn.disabled = false;
+    galleryStatus.textContent = `${mediaList.length} photos loaded`;
+  }
+
+  async function loadAllMedia(){
+    loadAllBtn.disabled = true; loadAllBtn.textContent = 'Searching...';
+    grid.innerHTML = '';
+    await fetchManifest();
+    mediaList.forEach((it, i) => grid.appendChild(makeTile(it, i)));
+    loadAllBtn.textContent = 'Reload All Media'; loadAllBtn.disabled = false;
+    galleryStatus.textContent = `${mediaList.length} items loaded`;
+  }
 
   loadBtn.addEventListener('click', loadImages);
+  loadAllBtn.addEventListener('click', loadAllMedia);
 
-    // auto-load once for convenience
-    loadImages();
+  // auto-load all media on page open
+  loadAllMedia();
 
-    // Thumbnail click -> open lightbox
-    grid.addEventListener('click', (e)=>{
-      const img = e.target.closest('img');
-      if (!img) return;
-      const idx = Number(img.dataset.index);
-      if (Number.isFinite(idx)) openLightbox(idx);
-    });
+  // Thumbnail click -> open lightbox
+  grid.addEventListener('click', (e)=>{
+    const tile = e.target.closest('.tile');
+    if (!tile) return;
+    const idx = Number(tile.dataset.index);
+    if (Number.isFinite(idx)) openLightbox(idx);
+  });
 
-    function openLightbox(idx){
-      currentIndex = idx;
-      lbImg.src = imagesList[currentIndex];
-      lbImg.alt = imagesList[currentIndex].split('/').pop();
-      lbMeta.textContent = `${currentIndex+1} / ${imagesList.length}`;
-      lightbox.classList.add('open');
-      lightbox.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+  function openLightbox(idx){
+    currentIndex = idx;
+    const item = mediaList[currentIndex];
+    lbMedia.innerHTML = '';
+    if(item.type === 'image'){
+      const img = document.createElement('img'); img.src = item.src; img.alt = item.name; img.style.maxWidth='95%'; img.style.maxHeight='90%'; lbMedia.appendChild(img);
+    }else{
+      const v = document.createElement('video'); v.src = item.src; v.controls = true; v.autoplay = true; v.style.maxWidth='95%'; v.style.maxHeight='90%'; lbMedia.appendChild(v);
     }
+    lbMeta.textContent = `${currentIndex+1} / ${mediaList.length} (${item.type})`;
+    lightbox.classList.add('open'); lightbox.style.display = 'flex'; document.body.style.overflow = 'hidden';
+  }
 
-    function closeLightbox(){
-      lightbox.classList.remove('open');
-      setTimeout(()=>{ lightbox.style.display = 'none'; }, 200);
-      lbImg.src = '';
-      document.body.style.overflow = '';
-    }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    setTimeout(()=>{ lightbox.style.display = 'none'; lbMedia.innerHTML = ''; }, 200);
+    document.body.style.overflow = '';
+  }
 
-    function showNext(){ if (imagesList.length===0) return; currentIndex = (currentIndex+1) % imagesList.length; openLightbox(currentIndex); }
-    function showPrev(){ if (imagesList.length===0) return; currentIndex = (currentIndex-1 + imagesList.length) % imagesList.length; openLightbox(currentIndex); }
+  function showNext(){ if (mediaList.length===0) return; currentIndex = (currentIndex+1) % mediaList.length; openLightbox(currentIndex); }
+  function showPrev(){ if (mediaList.length===0) return; currentIndex = (currentIndex-1 + mediaList.length) % mediaList.length; openLightbox(currentIndex); }
 
-    lbClose.addEventListener('click', closeLightbox);
-    lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); showNext(); });
-    lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); showPrev(); });
+  lbClose.addEventListener('click', closeLightbox);
+  lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); showNext(); });
+  lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); showPrev(); });
 
-    // keyboard navigation
-    document.addEventListener('keydown', (e)=>{
-      if (!lightbox.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') showNext();
-      if (e.key === 'ArrowLeft') showPrev();
-    });
+  // keyboard navigation
+  document.addEventListener('keydown', (e)=>{
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNext();
+    if (e.key === 'ArrowLeft') showPrev();
+  });
   </script>
   <footer class="site-footer">
-    <div class="container"><small>Made with ❤ — Ashu</small></div>
+    <div class="container"><small>Made by Ayu</small></div>
   </footer>
 </body>
 </html>
