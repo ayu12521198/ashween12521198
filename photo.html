@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Beautiful photo gallery showcasing our cherished memories and moments together.">
   <title>Photos</title>
   <link rel="stylesheet" href="assets/styles.css">
   <style>
@@ -11,7 +12,7 @@
     h1{color:#c2185b;text-align:center; font-family: 'Dancing Script', cursive; font-size: 32px;}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:18px}
     .tile{position:relative;background: rgba(255, 255, 255, 0.95);border-radius:15px;overflow:hidden;box-shadow:0 6px 18px rgba(255,20,147,0.2);display:flex;align-items:center;justify-content:center; backdrop-filter: blur(10px);}
-    .tile img,.tile video{width:100%;height:200px;object-fit:cover;display:block; border-radius: 10px;}
+    .tile img,.tile video{width:100%;min-height:200px;height:auto;object-fit:contain;display:block; border-radius: 10px;}
     .play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
     .play-overlay button{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 10px;border-radius:6px;pointer-events:auto;cursor:pointer}
     .select-btn{position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.95);border:none;padding:6px;border-radius:50%;cursor:pointer;box-shadow:0 6px 18px rgba(150,50,100,0.08);font-size:16px}
@@ -26,10 +27,10 @@
     .btn:hover { transform: translateY(-2px); }
     .back{display:inline-block;margin-top:12px;color:#e91e63;text-decoration:none; font-weight: 500;}
     /* lightbox styles */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s}
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s;overflow:auto}
     .lightbox.open{opacity:1;pointer-events:auto}
-    .lightbox img{max-width:95%;max-height:90%;border-radius:15px;box-shadow:0 8px 40px rgba(0,0,0,0.6); border: 5px solid rgba(255,255,255,0.8);}
-    .lightbox .lbMedia img,.lightbox .lbMedia video{max-width:95%;max-height:90%;border-radius:15px;box-shadow:0 8px 40px rgba(0,0,0,0.6);display:block}
+    .lightbox img{border-radius:15px;box-shadow:0 8px 40px rgba(0,0,0,0.6); border: 5px solid rgba(255,255,255,0.8);}
+    .lightbox .lbMedia img,.lightbox .lbMedia video{border-radius:15px;box-shadow:0 8px 40px rgba(0,0,0,0.6);display:block}
     .lightbox .close,.lightbox .prev,.lightbox .next{position:fixed;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
     .lightbox .close{top:20px;right:20px}
     .lightbox .prev{left:20px;top:50%;transform:translateY(-50%)}
@@ -48,6 +49,18 @@
       </nav>
     </div>
   </header>
+
+  <div class="floating-hearts">
+    <div class="heart" style="left:10%; animation-delay:0s;">💖</div>
+    <div class="heart" style="left:20%; animation-delay:1s;">💕</div>
+    <div class="heart" style="left:30%; animation-delay:2s;">💓</div>
+    <div class="heart" style="left:40%; animation-delay:3s;">💘</div>
+    <div class="heart" style="left:50%; animation-delay:4s;">💗</div>
+    <div class="heart" style="left:60%; animation-delay:5s;">💞</div>
+    <div class="heart" style="left:70%; animation-delay:6s;">💝</div>
+    <div class="heart" style="left:80%; animation-delay:7s;">💟</div>
+    <div class="heart" style="left:90%; animation-delay:8s;">❤️</div>
+  </div>
 
   <div class="wrap">
     <h1>Photo Gallery</h1>
@@ -227,9 +240,9 @@
     const item = mediaList[currentIndex];
     lbMedia.innerHTML = '';
     if(item.type === 'image'){
-      const img = document.createElement('img'); img.src = item.src; img.alt = item.name; img.style.maxWidth='95%'; img.style.maxHeight='90%'; lbMedia.appendChild(img);
+      const img = document.createElement('img'); img.src = item.src; img.alt = item.name; lbMedia.appendChild(img);
     }else{
-      const v = document.createElement('video'); v.src = item.src; v.controls = true; v.autoplay = true; v.style.maxWidth='95%'; v.style.maxHeight='90%'; lbMedia.appendChild(v);
+      const v = document.createElement('video'); v.src = item.src; v.controls = true; v.autoplay = true; lbMedia.appendChild(v);
     }
     lbMeta.textContent = `${currentIndex+1} / ${mediaList.length} (${item.type})`;
     lightbox.classList.add('open'); lightbox.style.display = 'flex'; document.body.style.overflow = 'hidden';

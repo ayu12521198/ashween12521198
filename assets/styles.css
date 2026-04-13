@@ -51,8 +51,8 @@ h1, h2, h3 {font-family: 'Dancing Script', cursive; color: var(--love); }
 .hero p{margin:0;color:var(--muted); font-size: 18px; font-style: italic;}
 
 /* Lightbox small tweaks */
-.lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:2000;padding:20px}
-.lightbox img{max-width:95%;max-height:85vh;border-radius:15px;box-shadow:0 12px 40px rgba(0,0,0,0.5); border: 5px solid rgba(255,255,255,0.8);}
+.lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:2000;padding:0}
+.lightbox img{border-radius:15px;box-shadow:0 12px 40px rgba(0,0,0,0.5); border: 5px solid rgba(255,255,255,0.8);}
 
 /* Romantic animations */
 @keyframes heartbeat {
