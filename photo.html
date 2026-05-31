@@ -114,6 +114,8 @@
   const lbMeta = document.getElementById('lbMeta');
   const galleryStatus = document.getElementById('galleryStatus');
 
+  const pageBase = new URL('.', window.location.href);
+
   let mediaList = []; // {src,type,name}
   let currentIndex = -1;
 
@@ -181,13 +183,16 @@
   // fetch a manifest with all media files and populate the grid
   async function fetchManifest(){
     try{
-      const res = await fetch('ashween/media.json');
+      const manifestUrl = new URL('ashween/media.json', pageBase).href;
+      const res = await fetch(manifestUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status} while fetching manifest`);
       const list = await res.json(); // [{name,type}]
-      mediaList = list.map(f => ({ src: `ashween/${f.name}`, type: f.type, name: f.name }));
+      mediaList = list.map(f => ({ src: new URL(`ashween/${f.name}`, pageBase).href, type: f.type, name: f.name }));
       return mediaList;
     }catch(err){
       console.error('Could not load media manifest', err);
-      galleryStatus.textContent = 'Failed to load media manifest';
+      galleryStatus.style.display = 'block';
+      galleryStatus.textContent = 'Failed to load media manifest. Check that ashween/media.json exists and the site is served from GitHub Pages, not raw GitHub preview.';
       mediaList = [];
       return [];
     }
@@ -201,6 +206,7 @@
     mediaList = images;
     images.forEach((it, i) => grid.appendChild(makeTile(it, i)));
     loadBtn.textContent = 'Reload Photos'; loadBtn.disabled = false;
+    galleryStatus.style.display = 'block';
     galleryStatus.textContent = `${mediaList.length} photos loaded`;
   }
 
@@ -210,6 +216,7 @@
     await fetchManifest();
     mediaList.forEach((it, i) => grid.appendChild(makeTile(it, i)));
     loadAllBtn.textContent = 'Reload All Media'; loadAllBtn.disabled = false;
+    galleryStatus.style.display = 'block';
     galleryStatus.textContent = `${mediaList.length} items loaded`;
   }
 
